@@ -1712,3 +1712,442 @@ def test():
 test()
 ```
 
+## 10 常用的python库
+```python
+"""
+@Time           : 2019-10-24 21:54
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : os.py
+@Software       : PyCharm
+"""
+"""
+操作系统标准接口：
+    os模块提供了过多与操作系统相关联的函数
+"""
+
+import os
+import shutil
+import glob
+import sys
+import math
+import random
+from urllib.request import urlopen
+import smtplib
+import datetime
+import time
+import zlib
+from timeit import Timer
+
+print('当前工作目录：', os.getcwd())
+
+# 修改当前的工作目录
+# os.chdir('/ server / accesslogs')
+
+# 执行操作系统命令
+os.system('dir')
+
+# 导入关闭
+shutil.copy('./os.py', './os1.py')
+shutil.move('./os1.py', '../os1.py')
+
+"""
+文件通配符
+"""
+# glob模块提供了一个函数用于从目录通配符搜索中生成文件列表：
+print(glob.glob('*.py'))
+
+"""
+命令行参数
+"""
+print(sys.argv)
+
+# 错误输出重置和程序终止
+# sys还有stdin，stdout和stderr属性，甚至在stdout被重定向时，另外也可以用于显示警告和错误信息。
+# sys.stderr.write("警告，未找到开始新文件的日志文件")
+# sys.stdin.write("警告，未找到开始新文件的日志文件")
+# sys.stdout.write("警告，未找到开始新文件的日志文件")
+
+# 大部分脚本的定向终止都使用“ sys.exit（）”。
+
+"""
+数学
+    math模块为浮点运算提供了对扩展C函数库的访问
+"""
+print(math.cos(math.pi / 4))
+print(math.log(1024, 2))
+
+# random提供了生成随机数的工具。
+print(random.choice(['dell', 'lenovo', 'hp', 'mac']))
+
+# 采样而不替换
+print(random.sample(range(100), 10))
+# 随机浮点数
+print(random.random())
+# randrange(x)从x随机整数
+print(random.randrange(39))
+
+"""
+访问互联网
+"""
+# 其中一些最简单的两个是用于处理从url的接收的数据的urllib.request以及用于发送电子邮件的smtplib：
+print(urlopen('https://www.baidu.com'))
+
+# 注意需要本地有一个在运行的邮件服务器。
+# smtp = smtplib.SMTP("localhost")
+# smtp.sendmail('clj2ee@163.com', 'l058805540@qq.com', 'Python学习')
+# smtp.quit()
+
+"""
+日期和时间
+    datetime模块为日期和时间处理同时提供了简单和复杂的方法。
+    支持日期和时间算法的同时，实现的重点放在更有效的处理和格式化输出。
+    该模块还支持时区处理：
+"""
+print(datetime.date.today())
+print(datetime.date(2019, 10, 24))
+
+t = "2017-11-24 17:30:00"
+# 将其转换为时间数组
+timeStruct = time.strptime(t, "%Y-%m-%d %H:%M:%S")
+# 转换为时间戳:
+timeStamp = int(time.mktime(timeStruct))
+print(timeStamp)
+
+timeStamp = 1511515800
+localTime = time.localtime(timeStamp)
+strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)
+print(strTime)
+
+"""
+数据压缩
+    以下模块直接支持通用的数据打包和压缩格式：zlib，gzip，bz2，zipfile和tarfile
+"""
+
+"""
+性能指标
+    有些用户对了解解决同一问题的不同方法之间的性能差异很感兴趣。Python提供了一个刻度工具，为这些问题提供了直接答案。
+例如，使用元组封装和拆封来交换元素看起来要比使用传统的方法要诱人的多，timeit证明了现代的方法重启一些
+"""
+print(Timer('t = a; a = b; b = t', 'a = 1; b = 2').timeit())
+
+"""
+测试模块
+    开发出色软件的方法之一是为每一个函数开发测试代码，并且在开发过程中经常进行测试
+    doctest模块提供了一个工具，扫描模块并根据程序中内嵌的文档字符串执行测试。
+    测试构造经典简单的将它的输出结果剪切并粘贴到文档字符串中。
+    通过用户提供的示例，它强化了文档，允许doctest模块确认代码的结果是否与文档一致
+"""
+
+# 其它模块见文档
+```
+
+## 11 正则表达式
+### 11.1 正则表达式修饰符——可选标志
+> 正则表达式可以包含一些可选标志修饰符来控制匹配的模式。修饰符被指定为一个可选的标志。多个标志可以通过按位 OR(|) 它们来指定。如 re.I | re.M 被设置成 I 和 M 标志：
+
+|修饰符|描述|
+|----|----|
+|re.I	|使匹配对大小写不敏感|
+|re.L	|做本地化识别（locale-aware）匹配|
+|re.M	|多行匹配，影响 ^ 和 $|
+|re.S	|使 . 匹配包括换行在内的所有字符|
+|re.U	|根据Unicode字符集解析字符。这个标志影响 \w, \W, \b, \B.|
+|re.X	|该标志通过给予你更灵活的格式以便你将正则表达式写得更易于理解。|
+
+```python
+"""
+@Time           : 2019-10-26 09:15
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : RegularExpression.py
+@Software       : PyCharm
+"""
+"""
+正则表达式：
+    ? 和 * 通配符来查找硬盘上的文件。? 通配符匹配文件名中的 0 个或 1 个字符，而 * 通配符匹配零个或多个字符
+    用 * 字符代替 ? 字符扩大了找到匹配的数量
+"""
+
+'''
+    ^[0-9] + abc$
+        ^ 为匹配输入字符串的开始位置。
+        [0-9]+匹配多个数字， [0-9] 匹配单个数字，+ 匹配一个或者多个。
+        abc$匹配字母 abc 并以 abc 结尾，$ 为匹配输入字符串的结束位置。
+        
+        
+只允许用户名包含字符、数字、下划线和连接字符(-)，并设置用户名的长度
+    ^[a-z0-9_-]{3,5}$
+'''
+import re
+
+# re.match 尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match()就返回none。
+ma = '^[a-z0-9_-]{3,5}$'
+print(re.match(ma, 'sss').span())
+print('---------------------------------------------------------------')
+
+# re.search 扫描整个字符串并返回第一个成功的匹配。
+
+# group(num=0)	匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。
+# groups()	返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。
+line = "Cats are smarter than dogs"
+searchObj = re.search(r'(.*) are (.*?) .*', line, re.M | re.I)
+
+if searchObj:
+    print("searchObj.group() : ", searchObj.group())
+    print("searchObj.group(1) : ", searchObj.group(1))
+    print("searchObj.group(2) : ", searchObj.group(2))
+    print("searchObj.groups() : ", searchObj.groups())
+else:
+    print("Nothing found!!")
+
+print('---------------------------------------------------------------')
+
+# re.match与re.search的区别
+# re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。
+
+line = "Cats are smarter than dogs";
+
+matchObj = re.match(r'dogs', line, re.M | re.I)
+if matchObj:
+    print("match --> matchObj.group() : ", matchObj.group())
+else:
+    print("No match!!")
+
+matchObj = re.search(r'dogs', line, re.M | re.I)
+if matchObj:
+    print("search --> matchObj.group() : ", matchObj.group())
+else:
+    print("No match!!")
+print('---------------------------------------------------------------')
+
+'''
+检索和替换
+    Python 的re模块提供了re.sub用于替换字符串中的匹配项。
+    re.sub(pattern, repl, string, count=0, flags=0)
+    参数：
+    pattern : 正则中的模式字符串。
+    repl : 替换的字符串，也可为一个函数。
+    string : 要被查找替换的原始字符串。
+    count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。
+    flags : 编译时用的匹配模式，数字形式。
+    前三个为必选参数，后两个为可选参数。
+'''
+phone = "2004-959-559 # 这是一个电话号码"
+
+# 删除注释
+num = re.sub(r'#.*$', "", phone)
+print("电话号码 : ", num)
+
+# 移除非数字的内容
+num = re.sub(r'\D', "", phone)
+print("电话号码 : ", num)
+
+
+# 将匹配的数字乘于 2
+def double(matched):
+    """
+    :param matched:
+    :return:
+    """
+    value = int(matched.group('value'))
+    return str(value * 2)
+
+
+s = 'A23G4HFD567'
+print(re.sub('(?P<value>\d+)', double, s))
+print('---------------------------------------------------------------')
+
+"""
+compile 函数
+compile 函数用于编译正则表达式，生成一个正则表达式（ Pattern ）对象，供 match() 和 search() 这两个函数使用。
+
+语法格式为：
+    re.compile(pattern[, flags])
+    参数：
+        pattern : 一个字符串形式的正则表达式
+        flags 可选，表示匹配模式，比如忽略大小写，多行模式等，具体参数为：
+        re.I 忽略大小写
+        re.L 表示特殊字符集 \w, \W, \b, \B, \s, \S 依赖于当前环境
+        re.M 多行模式
+        re.S 即为' . '并且包括换行符在内的任意字符（' . '不包括换行符）
+        re.U 表示特殊字符集 \w, \W, \b, \B, \d, \D, \s, \S 依赖于 Unicode 字符属性数据库
+        re.X 为了增加可读性，忽略空格和' # '后面的注释
+"""
+pattern = re.compile(r'\d+')
+m = pattern.match('one12twothree34four')
+print(m)
+print(pattern.match('one12twothree34four', 3, 10))
+print(pattern.search('one12twothree34four').group())
+
+# 忽略大小写
+pattern = re.compile(r'([a-z]+) ([a-z]+)', re.I)
+m = pattern.match('Hello World Wide Web')
+print(m)
+# 返回匹配成功的整个子串
+print(m.group())
+# m.groups()等价于 (m.group(1), m.group(2), ...)
+print(m.groups())
+print('---------------------------------------------------------------')
+
+"""
+findall
+在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果没有找到匹配的，则返回空列表。
+注意： match 和 search 是匹配一次 findall 匹配所有。
+    语法格式为：
+        re.findall(string[, pos[, endpos]])
+    参数：
+        string 待匹配的字符串。
+        pos 可选参数，指定字符串的起始位置，默认为 0。
+        endpos 可选参数，指定字符串的结束位置，默认为字符串的长度。
+"""
+# 查找数字
+pattern = re.compile(r'\d+')
+result1 = pattern.findall('runoob 123 google 456')
+result2 = pattern.findall('run88oob123google456', 0, 10)
+
+print(result1)
+print(result2)
+
+# re.finditer
+# 和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。
+
+finditer = pattern.finditer('run88oob123google456', 0, 10)
+for iterm in finditer:
+    print(iterm)
+    print(iterm.group())
+
+print('---------------------------------------------------------------')
+
+"""
+re.split
+split 方法按照能够匹配的子串将字符串分割后返回列表，它的使用形式如下：
+    re.split(pattern, string[, maxsplit=0, flags=0])
+    参数：
+        参数	描述
+        pattern	匹配的正则表达式
+        string	要匹配的字符串。
+        maxsplit	分隔次数，maxsplit=1 分隔一次，默认为 0，不限制次数。
+        flags	标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。参见：正则表达式修饰符 - 可选标志
+"""
+print(re.split('\W+', 'runoob, runoob, runoob.'))
+```
+
+## 12 mysql
+### 12.1 安装mysql connector
+    需要更换镜像源:
+        C:\Users\程林\AppData\Roaming\pip\pip.ini
+        如果没有改文件夹和文件，就新建
+        pip.ini的内容设置为：
+            [global] 
+            index-url = http://mirrors.aliyun.com/pypi/simple/ 
+            [install] 
+            trusted-host=mirrors.aliyun.com
+        可以使用其他镜像源
+ python -m pip install mysql-connector
+
+### 12.2 Python使用mysql
+```python
+"""
+@Time           : 2019-10-26 22:54
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : Mysql.py
+@Software       : PyCharm
+"""
+"""
+    Python MySQL - mysql-connector 驱动
+    使用 mysql-connector 来连接使用 MySQL， mysql-connector 是 MySQL 官方提供的驱动器。
+    命令：python -m pip install mysql-connector
+"""
+import mysql.connector
+
+mydb = mysql.connector.connect(
+    host="xxx.xxx.xxx.xxx",  # 数据库主机地址
+    user="admin",  # 数据库用户名
+    passwd="admin"  # 数据库密码
+)
+
+print(mydb)
+cursor = mydb.cursor()
+
+# 执行sql语句
+print('----------------------------------------------')
+cursor.execute('show databases')
+for c in cursor:
+    print(c)
+
+print('----------------------------------------------')
+
+# 指定数据库
+test_db = mysql.connector.connect(
+    host="xxx.xxx.xxx.xxx",  # 数据库主机地址
+    user="admin",  # 数据库用户名
+    passwd="admin",  # 数据库密码
+    database="test_db"
+)
+test_cursor = test_db.cursor()
+
+# 查询所有的表
+blog_cursor.execute("SHOW TABLES")
+
+for x in blog_cursor:
+    print(x)
+
+print('-------------------查询表结构---------------------------')
+# 查询表结构
+blog_cursor.execute("desc t_blogtype")
+for y in blog_cursor:
+    print(y)
+
+print('-----------------------创建表--------------------')
+
+# 创建表
+# blog_cursor.execute("CREATE TABLE `sites` (name VARCHAR(255), url VARCHAR(255))")
+
+# 插入数据
+print('---------------------插入数据---------------------')
+sql = "INSERT INTO t_blogtype (typeName, orderNum) VALUES (%s, %s)"
+val = ("RUNOOB", 30)
+blog_cursor.execute(sql, val)
+# 数据表内容有更新，必须使用到该语句
+db_blog.commit()
+print("1 条记录已插入, ID:", blog_cursor.lastrowid)
+
+# 批量插入
+# 批量插入使用 executemany() 方法，该方法的第二个参数是一个元组列表，包含了我们要插入的数据：
+batchSql = "INSERT INTO t_blogtype (typeName, orderNum) VALUES (%s, %s)"
+val = [
+    ('Google', 4),
+    ('Github', 6),
+    ('Taobao', 8),
+    ('stackoverflow', 9)
+]
+blog_cursor.executemany(batchSql, val)
+mydb.commit()
+
+print('--------------------查询--------------------------')
+# 查询
+sql = 'SELECT * FROM `t_blogtype`'
+blog_cursor.execute(sql)
+# fetchall() 获取所有记录
+fetchall = blog_cursor.fetchall()
+
+for x in fetchall:
+    print(x)
+
+# where 条件查询
+
+# order by
+
+# group by
+
+# limit
+
+
+
+
+```
+
+
+## 13
