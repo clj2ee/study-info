@@ -2328,15 +2328,350 @@ for x in fetchall:
 
 
 ## 13 PyMysql
+```python
+"""
+@Time           : 2019-11-01 22:50
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : PyMysql.py
+@Software       : PyCharm
+"""
+"""
+什么是 PyMySQL？
+    PyMySQL 是在 Python3.x 版本中用于连接 MySQL 服务器的一个库，Python2中则使用mysqldb。
+    PyMySQL 遵循 Python 数据库 API v2.0 规范，并包含了 pure-Python MySQL 客户端库。
+"""
+import pymysql
 
+# 打开数据库连接
+db = pymysql.connect("106.14.112.147", "root", "toor", "db_blog")
 
+# 使用 cursor() 方法创建一个游标对象 cursor
+cursor = db.cursor()
 
-## 14 网络编程
+# 使用 execute()  方法执行 SQL 查询
+cursor.execute("SELECT VERSION()")
 
+# 使用 fetchone() 方法获取单条数据.
+data = cursor.fetchone()
 
+print("Database version : %s " % data)
+
+"""
+插入:
+
+"""
+
+# SQL 插入语句
+sql = "INSERT INTO t_blogtype (typeName, orderNum) VALUES  ('Google', 4)"
+# SQL 插入语句
+# sql = "INSERT INTO t_blogtype (typeName, orderNum) VALUES (%s, %d)" % ('Github', 6)
+try:
+    # 执行sql语句
+    cursor.execute(sql)
+    # 提交到数据库执行
+    db.commit()
+except:
+    # 如果发生错误则回滚
+    db.rollback()
+
+# 关闭数据库连接
+db.close()
+
+```
+
+## 14  网络编程
+
+### 14.1 Socket 对象(内建)方法
+
+| 函数                                 | 描述                                                         |
+| ------------------------------------ | ------------------------------------------------------------ |
+| 服务器端套接字                       |                                                              |
+| s.bind()                             | 绑定地址（host,port）到套接字， 在AF_INET下,以元组（host,port）的形式表示地址。 |
+| s.listen()                           | 开始TCP监听。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。 |
+| s.accept()                           | 被动接受TCP客户端连接,(阻塞式)等待连接的到来                 |
+| 客户端套接字                         |                                                              |
+| s.connect()                          | 主动初始化TCP服务器连接，。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。 |
+| s.connect_ex()                       | connect()函数的扩展版本,出错时返回出错码,而不是抛出异常      |
+| 公共用途的套接字函数                 |                                                              |
+| s.recv()                             | 接收TCP数据，数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。 |
+| s.send()                             | 发送TCP数据，将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。 |
+| s.sendall()                          | 完整发送TCP数据，完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成功返回None，失败则抛出异常。 |
+| s.recvfrom()                         | 接收UDP数据，与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。 |
+| s.sendto()                           | 发送UDP数据，将数据发送到套接字，address是形式为（ipaddr，port）的元组，指定远程地址。返回值是发送的字节数。 |
+| s.close()                            | 关闭套接字                                                   |
+| s.getpeername()                      | 返回连接套接字的远程地址。返回值通常是元组（ipaddr,port）。  |
+| s.getsockname()                      | 返回套接字自己的地址。通常是一个元组(ipaddr,port)            |
+| s.setsockopt(level,optname,value)    | 设置给定套接字选项的值。                                     |
+| s.getsockopt(level,optname[.buflen]) | 返回套接字选项的值。                                         |
+| s.settimeout(timeout)                | 设置套接字操作的超时期，timeout是一个浮点数，单位是秒。值为None表示没有超时期。一般，超时期应该在刚创建套接字时设置，因为它们可能用于连接的操作（如connect()） |
+| s.gettimeout()                       | 返回当前超时期的值，单位是秒，如果没有设置超时期，则返回None。 |
+| s.fileno()                           | 返回套接字的文件描述符。                                     |
+| s.setblocking(flag)                  | 如果flag为0，则将套接字设为非阻塞模式，否则将套接字设为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。 |
+| s.makefile()                         | 创建一个与该套接字相关连的文件                               |
+
+```python
+"""
+@Time           : 2019-11-02 00:14
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : Network.py
+@Software       : PyCharm
+"""
+"""
+网络编程：
+    Python 提供了两个级别访问的网络服务。：
+        低级别的网络服务支持基本的 Socket，它提供了标准的 BSD Sockets API，可以访问底层操作系统Socket接口的全部方法。
+        高级别的网络服务模块 SocketServer， 它提供了服务器中心类，可以简化网络服务器的开发
+        
+    什么是 Socket?
+        Socket又称"套接字"，应用程序通常通过"套接字"向网络发出请求或者应答网络请求，使主机间或者一台计算机上的进程间可以通讯。
+    
+    socket()函数
+    Python 中，我们用 socket（）函数来创建套接字，语法格式如下：
+        socket.socket([family[, type[, proto]]])
+        参数
+        family: 套接字家族可以使AF_UNIX或者AF_INET
+        type: 套接字类型可以根据是面向连接的还是非连接分为SOCK_STREAM或SOCK_DGRAM
+        protocol: 一般不填默认为0.
+"""
+
+"""
+服务端
+    我们使用 socket 模块的 socket 函数来创建一个 socket 对象。socket 对象可以通过调用其他函数来设置一个 socket 服务。
+    现在我们可以通过调用 bind(hostname, port) 函数来指定服务的 port(端口)。
+    接着，我们调用 socket 对象的 accept 方法。该方法等待客户端的连接，并返回 connection 对象，表示已连接到客户端。
+"""
+import socket
+import sys
+
+# 1 创建socket对象
+serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# 2 绑定端口号
+# 绑定地址（host,port）到套接字， 在AF_INET下,以元组（host,port）的形式表示地址。
+serverSocket.bind((socket.gethostname(), 9999))
+
+# 3 设置最大连接数，超过后排队
+# 开始TCP监听。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。
+serverSocket.listen(5)
+
+while True:
+    # 建立客户端连接,被动接受TCP客户端连接,(阻塞式)等待连接的到来
+    clientSocket, addr = serverSocket.accept()
+
+    print("连接地址: %s" % str(addr))
+
+    msg = '欢迎访问菜鸟教程'
+    clientSocket.send(msg.encode('utf-8'))
+    clientSocket.close()
+
+"""
+客户端
+    接下来我们写一个简单的客户端实例连接到以上创建的服务。端口号为 9999。
+    socket.connect(hosname, port ) 方法打开一个 TCP 连接到主机为 hostname 端口为 port 的服务商。连接后我们就可以从服务端获取数据，记住，操作完成后需要关闭连接。
+"""
+import socket
+import sys
+
+# 1 创建socket对象
+clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# 2 连接服务，指定主机和端口
+# 主动初始化TCP服务器连接，。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。
+clientSocket.connect((socket.gethostname(), 9999))
+
+# 3 接收小于 1024 字节的数据
+# 接收TCP数据，数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。
+msg = clientSocket.recv(1024)
+
+# 4 关闭连接,关闭套接字
+clientSocket.close()
+
+print(msg.decode('utf-8'))
+
+```
+
+### 14.2 Python Internet 模块
+
+以下列出了 Python 网络编程的一些重要模块：
+
+| 协议   | 功能用处                         | 端口号 | Python 模块                |
+| ------ | -------------------------------- | ------ | -------------------------- |
+| HTTP   | 网页访问                         | 80     | httplib, urllib, xmlrpclib |
+| NNTP   | 阅读和张贴新闻文章，俗称为"帖子" | 119    | nntplib                    |
+| FTP    | 文件传输                         | 20     | ftplib, urllib             |
+| SMTP   | 发送邮件                         | 25     | smtplib                    |
+| POP3   | 接收邮件                         | 110    | poplib                     |
+| IMAP4  | 获取邮件                         | 143    | imaplib                    |
+| Telnet | 命令行                           | 23     | telnetlib                  |
+| Gopher | 信息查找                         | 70     | gopherlib, urllib          |
 
 ## 15 STMP发送邮件
+```python
+"""
+@Time           : 2019-11-03 14:53
+@Author         : clj2ee@163.com
+@ProjectName    : python-project
+@File           : Smtp.py
+@Software       : PyCharm
+"""
+"""
+Python3 SMTP发送邮件
+    SMTP（Simple Mail Transfer Protocol）即简单邮件传输协议,它是一组用于由源地址到目的地址传送邮件的规则，由它来控制信件的中转方式。
+    python的smtplib提供了一种很方便的途径发送电子邮件。它对smtp协议进行了简单的封装。
 
+    Python创建 SMTP 对象语法如下：
+    import smtplib
+    smtpObj = smtplib.SMTP( [host [, port [, local_hostname]]] )
+    参数说明：
+        host: SMTP 服务器主机。 你可以指定主机的ip地址或者域名如:runoob.com，这个是可选参数。
+        port: 如果你提供了 host 参数, 你需要指定 SMTP 服务使用的端口号，一般情况下SMTP端口号为25。
+        local_hostname: 如果SMTP在你的本机上，你只需要指定服务器地址为 localhost 即可。
+    
+    Python SMTP对象使用sendmail方法发送邮件，语法如下：
+    SMTP.sendmail(from_addr, to_addrs, msg[, mail_options, rcpt_options]
+    参数说明：
+        from_addr: 邮件发送者地址。
+        to_addrs: 字符串列表，邮件发送地址。
+        msg: 发送消息
+    这里要注意一下第三个参数，msg是字符串，表示邮件。我们知道邮件一般由标题，发信人，收件人，邮件内容，附件等构成，发送邮件的时候，要注意msg的格式。这个格式就是smtp协议中定义的格式。
+"""
+
+# 如果我们本机没有 sendmail 访问，也可以使用其他服务商的 SMTP 访问（QQ、网易、Google等）。
+
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+
+print('1 简单邮件发送，2 发送html邮件，3 发送带附件的邮件，4 在 HTML 文本中添加图片')
+data = input('please input:\n>>>')
+
+# 第三方 SMTP 服务
+mail_host = "smtp.qq.com"  # 设置服务器
+mail_user = "xxxx@qq.com"  # 用户名
+mail_pass = "ccccc"  # 口令
+
+sender = 'xxxx@qq.com'
+# 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+receivers = ('xxx@163.com')
+
+if data == '1':
+
+    content = 'Python 邮件发送测试...'
+
+    # 标准邮件需要三个头部信息： From, To, 和 Subject ，每个信息直接使用空行分割。
+    subject = 'Python SMTP 邮件测试'
+    message = MIMEText(content, 'plain', 'utf-8')
+    message['Subject'] = Header(subject, 'utf-8')
+    # message['From'] = Header("cl", 'utf-8')
+    # message['To'] = Header("clj2ee", 'utf-8')
+    message['From'] = sender
+    message['To'] = receivers
+
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, message.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
+elif data == '2':
+
+    # 读取html文件内容
+    f = open('index.html', 'rb')  # HTML文件默认和当前文件在同一路径下，若不在同一路径下，需要指定要发送的HTML文件的路径
+    mail_body = f.read()
+    f.close()
+
+    message = MIMEText(mail_body, 'html', 'utf-8')
+    subject = 'Python SMTP html邮件测试'
+    message['Subject'] = Header(subject, 'utf-8')
+    message['From'] = sender
+    message['To'] = receivers
+
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.set_debuglevel(1)
+        smtpObj.connect(mail_host, 25)
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, message.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
+elif data == '3':
+    # 创建一个带附件的实例
+    message = MIMEMultipart()
+    subject = 'Python SMTP 附件邮件测试'
+    message['Subject'] = Header(subject, 'utf-8')
+    message['From'] = sender
+    message['To'] = receivers
+
+    # 邮件正文内容
+    message.attach(MIMEText('这是菜鸟教程Python 邮件发送测试……', 'plain', 'utf-8'))
+
+    # 构造附件1，传送当前目录下的 test.txt 文件
+    att1 = MIMEText(open('E:/project-group/python-project/foo1.txt', 'rb').read(), 'base64', 'utf-8')
+    att1["Content-Type"] = 'application/octet-stream'
+    # 这里的filename可以任意写，写什么名字，邮件中显示什么名字
+    att1["Content-Disposition"] = 'attachment; filename="foo1.txt"'
+    message.attach(att1)
+
+    # 构造附件2，传送当前目录下的 foo3.txt 文件
+    att2 = MIMEText(open('E:/project-group/python-project/foo3.txt', 'rb').read(), 'base64', 'utf-8')
+    att2["Content-Type"] = 'application/octet-stream'
+    att2["Content-Disposition"] = 'attachment; filename="foo3.txt"'
+    message.attach(att2)
+
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.connect(mail_host, 25)
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, message.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
+elif data == '4':
+    msgRoot = MIMEMultipart('related')
+    msgRoot['From'] = sender
+    msgRoot['To'] = receivers
+    subject = 'Python SMTP html中图片邮件测试'
+    msgRoot['Subject'] = Header(subject, 'utf-8')
+
+    msgAlternative = MIMEMultipart('alternative')
+    msgRoot.attach(msgAlternative)
+
+    mail_msg = """
+    <p>Python 邮件发送测试...</p>
+    <p color='red'><a href="http://www.baidu.com">百度</a></p>
+    <p>图片演示：</p>
+    <p><img src="cid:image1"></p>
+    """
+    msgAlternative.attach(MIMEText(mail_msg, 'html', 'utf-8'))
+
+    # 指定图片为当前目录
+    fp = open('C:/Users/程林/Pictures/Saved Pictures/0007.jpg', 'rb')
+    msgImage = MIMEImage(fp.read())
+    fp.close()
+
+    # 定义图片 ID，在 HTML 文本中引用2
+    msgImage.add_header('Content-ID', '<image1>')
+    msgRoot.attach(msgImage)
+
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.connect(mail_host, 25)
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, msgRoot.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
+else:
+    print('没有该类型的邮件')
+
+```
 
 
 ## 16 Python3多线程
